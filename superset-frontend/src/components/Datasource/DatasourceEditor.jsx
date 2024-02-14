@@ -184,7 +184,6 @@ function ColumnCollectionTable({
   editableColumnName,
   showExpression,
   allowAddItem,
-  allowEditDataType,
   itemGenerator,
   columnLabelTooltips,
 }) {
@@ -272,21 +271,19 @@ function ColumnCollectionTable({
                 />
               }
             />
-            {allowEditDataType && (
-              <Field
-                fieldKey="type"
-                label={t('Data type')}
-                control={
-                  <Select
-                    ariaLabel={t('Data type')}
-                    options={DATA_TYPES}
-                    name="type"
-                    allowNewOptions
-                    allowClear
-                  />
-                }
-              />
-            )}
+            <Field
+              fieldKey="type"
+              label={t('Data type')}
+              control={
+                <Select
+                  ariaLabel={t('Data type')}
+                  options={DATA_TYPES}
+                  name="type"
+                  allowNewOptions
+                  allowClear
+                />
+              }
+            />
             {isFeatureEnabled(FeatureFlag.EnableAdvancedDataTypes) ? (
               <Field
                 fieldKey="advanced_data_type"
@@ -494,14 +491,12 @@ ColumnCollectionTable.propTypes = {
   editableColumnName: PropTypes.bool,
   showExpression: PropTypes.bool,
   allowAddItem: PropTypes.bool,
-  allowEditDataType: PropTypes.bool,
   itemGenerator: PropTypes.func,
 };
 ColumnCollectionTable.defaultProps = {
   editableColumnName: false,
   showExpression: false,
   allowAddItem: false,
-  allowEditDataType: false,
   itemGenerator: () => ({
     column_name: t('<new column>'),
     filterable: true,
@@ -1490,7 +1485,6 @@ class DatasourceEditor extends React.PureComponent {
                 editableColumnName
                 showExpression
                 allowAddItem
-                allowEditDataType
                 itemGenerator={() => ({
                   column_name: t('<new column>'),
                   filterable: true,

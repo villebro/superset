@@ -65,7 +65,6 @@ These features flags are **safe for production**. They have been tested and will
 - DASHBOARD_RBAC [(docs)](https://superset.apache.org/docs/creating-charts-dashboards/first-dashboard#manage-access-to-dashboards)
 - DASHBOARD_VIRTUALIZATION
 - DATAPANEL_CLOSED_BY_DEFAULT
-- DISABLE_LEGACY_DATASOURCE_EDITOR
 - DRILL_BY
 - DRUID_JOINS
 - EMBEDDABLE_CHARTS
