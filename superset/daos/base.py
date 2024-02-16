@@ -120,7 +120,9 @@ class BaseDAO(Generic[T]):
             query = cls.base_filter(  # pylint: disable=not-callable
                 cls.id_column_name, data_model
             ).apply(query, None)
-        return query.filter_by(**filter_by).one_or_none()
+        for key, value in filter_by.items():
+            query = query.filter(getattr(cls.model_cls, key) == value)
+        return query.one_or_none()
 
     @classmethod
     def create(
