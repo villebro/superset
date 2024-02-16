@@ -314,8 +314,6 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
         appbuilder.add_view_no_menu(SqllabView)
         appbuilder.add_view_no_menu(SqlMetricInlineView)
         appbuilder.add_view_no_menu(Superset)
-        appbuilder.add_view_no_menu(TableColumnInlineView)
-        appbuilder.add_view_no_menu(TableModelView)
         appbuilder.add_view_no_menu(TableSchemaView)
         appbuilder.add_view_no_menu(TabStateView)
         appbuilder.add_view_no_menu(TaggedObjectView)
