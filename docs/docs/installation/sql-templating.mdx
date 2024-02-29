@@ -42,10 +42,10 @@ to make your query robust to clearing the timerange filter:
 SELECT *
 FROM tbl
 WHERE (
-    {% if from_dttm is not none %}
+    {% if from_dttm %}
         dttm_col > '{{ from_dttm }}' AND
     {% endif %}
-    {% if to_dttm is not none %}
+    {% if to_dttm %}
         dttm_col < '{{ to_dttm }}' AND
     {% endif %}
     true
