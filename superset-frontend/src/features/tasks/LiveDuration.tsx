@@ -31,10 +31,21 @@ export interface LiveDurationProps {
   locale?: string;
 }
 
-// Animate the running duration at 10 fps so sub-minute durations count up
-// smoothly (they render with one decimal). Purely a client-side re-render — no
-// network — so a handful of running rows is negligible load.
-const LIVE_TICK_INTERVAL_MS = 100;
+// Animate only as fast as the smallest unit currently shown changes, so load
+// scales with relevance. formatDuration renders sub-minute durations with a
+// tenths decimal (→ 100ms), "Xm Ys" from 1 min (seconds → 1s), "Xh Ym" from
+// 1 hour (minutes → 1min), and "Xd Yh" from 1 day (hours → 1h). Purely
+// client-side re-renders, no network.
+const MINUTE_S = 60;
+const HOUR_S = 60 * MINUTE_S;
+const DAY_S = 24 * HOUR_S;
+
+const tickIntervalForSeconds = (seconds: number): number => {
+  if (seconds < MINUTE_S) return 100;
+  if (seconds < HOUR_S) return 1000;
+  if (seconds < DAY_S) return 60 * 1000;
+  return 60 * 60 * 1000;
+};
 
 /**
  * Renders a task's duration.
@@ -50,13 +61,25 @@ export const LiveDuration = ({
   live,
   locale,
 }: LiveDurationProps) => {
-  const now = useCurrentTime(live, undefined, LIVE_TICK_INTERVAL_MS);
   const anchor = useMemo(
     () =>
       durationSeconds == null
         ? null
         : { base: durationSeconds, at: Date.now() },
     [durationSeconds],
+  );
+
+  // Pick the tick cadence from the currently-elapsed value (read at render so
+  // it stays fresh as the duration crosses a unit boundary); useCurrentTime
+  // restarts its interval whenever this changes.
+  const approxSeconds =
+    anchor == null
+      ? 0
+      : anchor.base + Math.max(0, Date.now() - anchor.at) / 1000;
+  const now = useCurrentTime(
+    live,
+    undefined,
+    tickIntervalForSeconds(approxSeconds),
   );
 
   if (!live || anchor == null) {

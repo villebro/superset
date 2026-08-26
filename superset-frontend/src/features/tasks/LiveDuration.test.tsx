@@ -93,3 +93,27 @@ test('animates sub-minute durations at sub-second granularity', () => {
 
   expect(container).toHaveTextContent(formatDuration(3.4, 'en') as string);
 });
+
+test('ticks a minute-plus duration at second (not sub-second) cadence', () => {
+  jest.useFakeTimers();
+  jest.setSystemTime(0);
+
+  const { container } = render(
+    <LiveDuration durationSeconds={120} live locale="en" />,
+  );
+
+  expect(container).toHaveTextContent(formatDuration(120, 'en') as string);
+
+  // Sub-second elapsed does not re-render a minute-plus duration (its smallest
+  // shown unit is seconds), so the value is unchanged after 100ms.
+  act(() => {
+    jest.advanceTimersByTime(100);
+  });
+  expect(container).toHaveTextContent(formatDuration(120, 'en') as string);
+
+  // A full second later it advances by one second.
+  act(() => {
+    jest.advanceTimersByTime(900);
+  });
+  expect(container).toHaveTextContent(formatDuration(121, 'en') as string);
+});
