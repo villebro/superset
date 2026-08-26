@@ -24,12 +24,17 @@ export interface LiveDurationProps {
   durationSeconds: number | null;
   /**
    * When true (realtime push active AND the task is still running), the value
-   * ticks upward once per second. When false, the server value renders
+   * ticks upward while it runs. When false, the server value renders
    * statically and refreshes on the next poll/fetch.
    */
   live: boolean;
   locale?: string;
 }
+
+// Animate the running duration at 10 fps so sub-minute durations count up
+// smoothly (they render with one decimal). Purely a client-side re-render — no
+// network — so a handful of running rows is negligible load.
+const LIVE_TICK_INTERVAL_MS = 100;
 
 /**
  * Renders a task's duration.
@@ -45,7 +50,7 @@ export const LiveDuration = ({
   live,
   locale,
 }: LiveDurationProps) => {
-  const now = useCurrentTime(live);
+  const now = useCurrentTime(live, undefined, LIVE_TICK_INTERVAL_MS);
   const anchor = useMemo(
     () =>
       durationSeconds == null

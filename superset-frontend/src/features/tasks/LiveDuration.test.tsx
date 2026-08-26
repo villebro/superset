@@ -74,3 +74,22 @@ test('ticks the duration upward once per second when live', () => {
   // Base (60s) + locally-measured elapsed (3s), no timestamp parsing involved.
   expect(container).toHaveTextContent(formatDuration(63, 'en') as string);
 });
+
+test('animates sub-minute durations at sub-second granularity', () => {
+  jest.useFakeTimers();
+  jest.setSystemTime(0);
+
+  const { container } = render(
+    <LiveDuration durationSeconds={3} live locale="en" />,
+  );
+
+  expect(container).toHaveTextContent(formatDuration(3, 'en') as string);
+
+  // A fraction of a second in: the counter advances (10 fps tick), so a
+  // sub-minute duration counts up smoothly rather than jumping whole seconds.
+  act(() => {
+    jest.advanceTimersByTime(400);
+  });
+
+  expect(container).toHaveTextContent(formatDuration(3.4, 'en') as string);
+});

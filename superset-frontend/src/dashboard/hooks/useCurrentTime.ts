@@ -19,17 +19,19 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 /**
- * Hook that provides the current time, updating every second.
+ * Hook that provides the current time, updating on a fixed interval.
  *
  * @param enabled - Whether the timer should be running
  * @param syncTrigger - When this value changes, the timer restarts in phase
  *                      with the new value. This ensures the display timer is
  *                      synchronized with refresh cycles.
+ * @param intervalMs - How often to update, in milliseconds (default 1000)
  * @returns The current timestamp in milliseconds
  */
 export const useCurrentTime = (
   enabled = true,
   syncTrigger?: number | null,
+  intervalMs = 1000,
 ): number => {
   const [currentTime, setCurrentTime] = useState(() => Date.now());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -56,10 +58,10 @@ export const useCurrentTime = (
     clearExistingInterval();
     intervalRef.current = setInterval(() => {
       setCurrentTime(Date.now());
-    }, 1000);
+    }, intervalMs);
 
     return clearExistingInterval;
-  }, [enabled, syncTrigger, clearExistingInterval]);
+  }, [enabled, syncTrigger, intervalMs, clearExistingInterval]);
 
   return currentTime;
 };
